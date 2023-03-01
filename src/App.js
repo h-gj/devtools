@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function App() {
   const [curl, setCurl] = useState('')
   const [newCurl, setNewCurl] = useState('')
   const [port, setPort] = useState(8000)
+  const textAreaRef = useRef(null);
 
   useEffect((e) => {
     geneReplacedCurl(curl)
@@ -32,8 +33,23 @@ function App() {
     const newCurl = oldCurl.replace(url.origin, `http://127.0.0.1:${port}`)
     console.log('newCurl', newCurl)
     setNewCurl(newCurl)
-    navigator.clipboard.writeText(newCurl)
+    copyToClipboard(newCurl)
   }
+
+  const copyToClipboard = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Unable to copy to clipboard', err);
+    }
+    document.body.removeChild(textArea);
+  }
+  
 
   return (
     <div className="App">
@@ -58,6 +74,15 @@ function App() {
 
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
       </header>
+
+      <form>
+        <textarea
+          // hidden
+          ref={textAreaRef}
+          value={newCurl}
+        />
+      </form>
+
     </div>
   );
 }
