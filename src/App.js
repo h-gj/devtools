@@ -1,22 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [curl, setCurl] = useState('')
+  const [newCurl, setNewCurl] = useState('')
+  const [port, setPort] = useState(8000)
+
+  useEffect((e) => {
+    geneReplacedCurl(curl)
+   },[port])
+
+  const cuzSetPort = (e) => {
+    const newPort = e.target.value
+    setPort(newPort)
+    // 为什么这样不行，数据会慢一步，useEffect可以。
+    // console.log(111123232, newPort, port);
+    // geneReplacedCurl(curl)
+  }
+
+  const geneReplacedCurl = (oldCurl) => {
+    setCurl(oldCurl)
+
+    console.log(8888, oldCurl);
+    // const oldCurl = e.target.value
+    if (!oldCurl) {
+      return
+    }
+    const matchedUrl = oldCurl.match('https?://.*')[0]
+    const url = new URL(matchedUrl)
+    console.log(8888, port);
+
+    const newCurl = oldCurl.replace(url.origin, `http://127.0.0.1:${port}`)
+    console.log('newCurl', newCurl)
+    setNewCurl(newCurl)
+    navigator.clipboard.writeText(newCurl)
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        Curl<textarea 
+        placeholder="请粘贴CUrl" 
+        rows="10"
+        cols="50"
+        // value={code}
+        // onChange={(v) => geneNewCode(v.target.value)}></textarea>
+        onChange={(e) => geneReplacedCurl(e.target.value)}></textarea>
+        Local Port：<input
+         placeholder="请输入本地端口" 
+         value={port}
+         onChange={cuzSetPort}
+         ></input>
+        Result：<textarea 
+        value={newCurl}
+        rows="10"
+        cols="50"
+        ></textarea>
+
+        {/* <img src={logo} className="App-logo" alt="logo" /> */}
       </header>
     </div>
   );
