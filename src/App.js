@@ -4,11 +4,13 @@ function App() {
   const [curl, setCurl] = useState('')
   const [newCurl, setNewCurl] = useState('')
   const [port, setPort] = useState(8000)
+  const [host, setHost] = useState('http://127.0.0.1')
   const textAreaRef = useRef(null);
+  const curlRef = useRef(null);
 
   useEffect((e) => {
     geneReplacedCurl(curl)
-   },[port])
+   },[host, port])
 
   const cuzSetPort = (e) => {
     const newPort = e.target.value
@@ -21,17 +23,15 @@ function App() {
   const geneReplacedCurl = (oldCurl) => {
     setCurl(oldCurl)
 
-    console.log(8888, oldCurl);
     // const oldCurl = e.target.value
     if (!oldCurl) {
       return
     }
+
     const matchedUrl = oldCurl.match('https?://.*')[0]
     const url = new URL(matchedUrl)
-    console.log(8888, port);
 
-    const newCurl = oldCurl.replace(url.origin, `http://127.0.0.1:${port}`)
-    console.log('newCurl', newCurl)
+    const newCurl = oldCurl.replace(url.origin, `${host}:${port}`)
     setNewCurl(newCurl)
     copyToClipboard(newCurl)
   }
@@ -49,35 +49,92 @@ function App() {
     }
     document.body.removeChild(textArea);
   }
-  
+
+  const onClear = (e) => {
+    console.log(2323232, e, curlRef);
+    setCurl('')
+    curlRef.current.focus()
+  }
+
 
   return (
     <div className="App">
       <header className="App-header">
-        Curl<textarea 
-        placeholder="请粘贴CUrl" 
-        rows="10"
-        cols="50"
-        // value={code}
+        <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center"
+        }}
+        >
+        <textarea 
+        ref={curlRef}
+        placeholder="请粘贴Curl" 
+        rows="40"
+        cols="55"
+        autoFocus
+        value={curl}
         // onChange={(v) => geneNewCode(v.target.value)}></textarea>
-        onChange={(e) => geneReplacedCurl(e.target.value)}></textarea>
-        Local Port：<input
+        onChange={(e) => geneReplacedCurl(e.target.value)}
+        ></textarea>
+        
+        <div
+        style={{
+          display: "flex",
+          flexDirection: "column"
+        }}
+        >
+        <button 
+        onClick={onClear}
+        style={{
+          padding: 20
+        }}
+        >Clear</button>
+        <br />
+        Map to host:
+
+        <input 
+        value={host}
+        onChange={(e) => setHost(e.target.value)}
+        >
+        </input>
+         With port：
+         
+         <button
+         onClick={() => setPort(prev => prev - 1)}
+         >-</button>
+         <input
          placeholder="请输入本地端口" 
          value={port}
          onChange={cuzSetPort}
-         ></input>
-        Result：<textarea 
+         >
+         </input>
+         <button
+          onClick={() => setPort(prev => prev + 1)}
+         >+</button>
+
+
+        </div>
+
+        {/* <span>8000</span>
+        <span>8001</span>
+        <span>8002</span>
+        <span>8003</span>
+        <span>8000</span> */}
+
+        <textarea 
         value={newCurl}
-        rows="10"
-        cols="50"
+        rows="40"
+        cols="55"
         ></textarea>
+        </div>
 
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
       </header>
 
       <form>
         <textarea
-          // hidden
+          hidden
           ref={textAreaRef}
           value={newCurl}
         />
