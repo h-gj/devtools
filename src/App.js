@@ -6,8 +6,14 @@ function App() {
   const [replaceChoice, setReplaceChoice] = useState(1)
   const [textReplaceTo, setTextReplaceTo] = useState('http://127.0.0.1:8000')
   const [newCurl, setNewCurl] = useState('')
+  const [hostMap, setHostMap] = useState(localStorage.getItem('hostMap'))
   const textAreaRef = useRef(null);
   const curlRef = useRef(null);
+
+  const calcReplaceTo = (host) => {
+    const hostMap = JSON.parse(localStorage.getItem('hostMap') || '{}')
+    return hostMap[host] || 'http://127.0.0.1:8000'
+  }
 
   const geneReplacedCurl = (oldCurl) => {
     setCurl(oldCurl)
@@ -18,6 +24,9 @@ function App() {
     const matchedUrl = oldCurl.match('https?://.*')[0]
     const url = new URL(matchedUrl)
     setTextForReplace(url.origin)
+
+    const replaceTo = calcReplaceTo(url.origin)
+    setTextReplaceTo(replaceTo)
   }
 
 
@@ -49,6 +58,21 @@ function App() {
   const onClear = (e) => {
     console.log(2323232, e, curlRef);
     setCurl('')
+  }
+
+  const handleHostMapChange = (e) => {
+    const hostMap = new Object()
+    const mapList = e.target.value.split(' ')
+    setHostMap(e.target.value)
+    // for (let index = 0; index < mapList.length; index++) {
+    //   const element = mapList[index];
+    //   const [mapFromHost, mapToHost] = element.split('=>')
+    //   hostMap[mapFromHost] = mapToHost
+
+    // }
+    localStorage.setItem('hostMap', e.target.value)
+    const newReplaceTo = calcReplaceTo(textForReplace)
+    setTextReplaceTo(newReplaceTo)
   }
 
 
@@ -123,6 +147,22 @@ function App() {
         }}
          >Gene & Copy
         </button> 
+
+        {/* <div>
+        <input></input>
+        <span>=></span>
+        <input></input>
+        </div> */}
+        <span>Souce Host => Target Host</span>
+        <textarea
+          onChange={handleHostMapChange}
+          rows="21"
+          cols="30"
+          value={hostMap}
+        >
+          {/* https://v8back.icgoo.net=>http://127.0.0.1:8000
+          https://v9back.icgoo.net=>http://127.0.0.1:9000 */}
+        </textarea>
 
         </div>
 
