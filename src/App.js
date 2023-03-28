@@ -105,7 +105,7 @@ function App() {
         >
       
         {/* <br /> */}
-        <h3 style={{textAlign: "center"}}>Just a String Replacer</h3>
+        <h3 style={{textAlign: "center"}}>Just a String Converter</h3>
 
 
         Text for Replace:
@@ -155,7 +155,7 @@ function App() {
         <span>=></span>
         <input></input>
         </div> */}
-        <span>Replacement Presets</span>
+        <span>Host Replacement Presets</span>
         <textarea
           onChange={handleHostMapChange}
           rows="17"
